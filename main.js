@@ -3,24 +3,46 @@ var App = (function(){
   // Below is basically an instance variable
   // But we can't define it's value since this is self invoking
   // and the dom element doesn't exist yet probably.
-  var $button1;
+  var $commentBox;
 
   var init = function() {
     _setupEvents();
-    loadArticles();
-    loadComments();
-  };
-
-  var counter = 0;
-
-  var fadeMe = function() {
-
+    // loadArticles();
+    // loadComments();
   };
 
   // This is where event handlers go
   var _setupEvents = function() {
-    $button1 = $('#button1');
-    $button1.on('click', fadeMe);
+    console.log('Events setup');
+    $commentBox = $('#newCommentBox');
+    $commentBox.on('change', _submitComment);
+  };
+
+  var _submitComment = function(event) {
+    // If we were using a form or a href, we would prevent default
+    // Put this first
+    // event.preventDefault();
+
+    // 'this' will be the comment input box
+    // If we were using a form, we would pull out values here too
+    console.log(this);
+    var commentValue = this.value;
+
+    // This ajax is triggered when we change the box
+    // not on page load
+    $.ajax({
+      url: '/comments',
+      type: 'POST',
+      data: {comment: commentValue}, // They have DATA to send to server
+    })
+    .done(function() {
+      // Render comment to page here as well
+      console.log("success");
+    }).fail(function() {
+      console.log("Failure");
+    });
+
+    // If its a form, return false
   };
 
   var increment = function() {
@@ -56,5 +78,5 @@ var App = (function(){
 
 $(document).ready(function() {
   App.init();
-  App.loadComments();
+  // App.loadComments();
 });
